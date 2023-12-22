@@ -260,14 +260,21 @@ class TabVulnerabilityMixin:
         if not display_tab:
             return
 
-        vulnerability_getter_function = {
-            "cpe": vulnerablecode.get_vulnerabilities_by_cpe,
-            "package_url": vulnerablecode.get_vulnerabilities_by_purl,
-        }.get(self.vulnerability_matching_field)
+        # Use the value from the DB first if available
+        vulnerabilities = self.object.affected_by_vulnerabilities
 
-        vulnerabilities = vulnerability_getter_function(matching_value, timeout=3)
         if not vulnerabilities:
-            return
+            vulnerability_getter_function = {
+                "cpe": vulnerablecode.get_vulnerabilities_by_cpe,
+                "package_url": vulnerablecode.get_vulnerabilities_by_purl,
+            }.get(self.vulnerability_matching_field)
+            vulnerabilities = vulnerability_getter_function(matching_value, timeout=3)
+
+            if vulnerabilities:
+                self.object.affected_by_vulnerabilities = vulnerabilities
+                self.object.save(updated_fields=["affected_by_vulnerabilities"])
+            else:
+                return
 
         fields, vulnerabilities_count = self.get_vulnerabilities_tab_fields(vulnerabilities)
 
@@ -1442,12 +1449,10 @@ class PackageDetailsView(
         fields = []
         vulnerabilities_count = 0
 
-        for entry in vulnerabilities:
-            unresolved = entry.get("affected_by_vulnerabilities", [])
-            for vulnerability in unresolved:
-                vulnerability_fields = self.get_vulnerability_fields(vulnerability, dataspace)
-                fields.extend(vulnerability_fields)
-                vulnerabilities_count += 1
+        for vulnerability in vulnerabilities:
+            vulnerability_fields = self.get_vulnerability_fields(vulnerability, dataspace)
+            fields.extend(vulnerability_fields)
+            vulnerabilities_count += 1
 
         return fields, vulnerabilities_count
 

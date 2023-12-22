@@ -760,10 +760,10 @@ class Report(HistoryFieldsMixin, DataspacedModel):
                 for field in self.column_template.fields.all()
             ]
             if include_view_link:
-                cells.insert(
-                    0, instance.get_absolute_link(value=icon, title="View", target="_blank")
-                )
+                view_link = instance.get_absolute_link(value=icon, title="View", target="_blank")
+                cells.insert(0, view_link)
             rows.append(cells)
+
         return rows
 
 

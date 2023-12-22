@@ -153,6 +153,7 @@ class PackageEmbeddedSerializer(DataspacedSerializer):
             "version",
             "qualifiers",
             "subpath",
+            "affected_by_vulnerabilities",
             "created_date",
             "last_modified_date",
         )
@@ -320,6 +321,7 @@ class ComponentSerializer(
             "licenses_summary",
             "license_choices_expression",
             "license_choices",
+            "affected_by_vulnerabilities",
             "created_date",
             "last_modified_date",
         )
@@ -560,6 +562,7 @@ class ComponentEmbeddedSerializer(ComponentSerializer):
             "approved_download_location",
             "approved_community_interaction",
             "urn",
+            "affected_by_vulnerabilities",
             "created_date",
             "last_modified_date",
         )
@@ -656,6 +659,7 @@ class PackageSerializer(
             "datasource_id",
             "file_references",
             "external_references",
+            "affected_by_vulnerabilities",
             "created_date",
             "last_modified_date",
             "collect_data",

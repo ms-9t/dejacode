@@ -152,3 +152,35 @@ def get_plain_purls(packages):
         if (plain_package_url := package.plain_package_url)
     )
     return list(unique_plain_purls)
+
+
+# def fetch_vulnerabilities(packages, chunk_size=1000, logger=logger.info):
+#     """
+#     Fetch and store vulnerabilities for each provided ``packages``.
+#     The PURLs are used for the lookups in batch of ``chunk_size`` per request.
+#     """
+#     vulnerabilities_by_purl = {}
+#
+#     for purls_batch in chunked(get_purls(packages), chunk_size):
+#         response_data = bulk_search_by_purl(purls_batch)
+#         for vulnerability_data in response_data:
+#             vulnerabilities_by_purl[vulnerability_data["purl"]] = vulnerability_data
+#
+#     unsaved_objects = []
+#     for package in packages:
+#         if package_data := vulnerabilities_by_purl.get(package.package_url):
+#             if affected_by := package_data.get("affected_by_vulnerabilities", []):
+#                 package.affected_by_vulnerabilities = affected_by
+#                 unsaved_objects.append(package)
+#
+#     if unsaved_objects:
+#         model_class = unsaved_objects[0].__class__
+#         model_class.objects.bulk_update(
+#             objs=unsaved_objects,
+#             fields=["affected_by_vulnerabilities"],
+#             batch_size=1000,
+#         )
+#         logger(
+#             f"{len(unsaved_objects)} {model_class._meta.verbose_name_plural} updated "
+#             f"with vulnerability data."
+#         )

@@ -194,6 +194,7 @@ def get_model_data_for_column_template(dataspace=None):
                 "redistribution_required",
                 "change_tracking_required",
                 "where_used",
+                "is_vulnerable",
             ],
         },
         "component_catalog:package": {
@@ -209,6 +210,7 @@ def get_model_data_for_column_template(dataspace=None):
                 "short_package_url",
                 "where_used",
                 "inferred_url",
+                "is_vulnerable",
             ],
         },
         "license_library:license": {

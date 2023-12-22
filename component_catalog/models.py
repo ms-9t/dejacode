@@ -450,6 +450,25 @@ class HashFieldsMixin(models.Model):
         abstract = True
 
 
+class VulnerabilityMixin(models.Model):
+    """Add the vulnerability related fields and methods."""
+
+    affected_by_vulnerabilities = models.JSONField(blank=True, default=list)
+
+    @property
+    def is_vulnerable(self):
+        """Returns True if this instance is affected by vulnerabilities."""
+        return bool(self.affected_by_vulnerabilities)
+
+    class Meta:
+        abstract = True
+
+
+class VulnerabilityQuerySetMixin:
+    def vulnerable(self):
+        return self.filter(~Q(affected_by_vulnerabilities__in=EMPTY_VALUES))
+
+
 class ComponentType(DataspacedModel):
     label = models.CharField(
         max_length=50,
@@ -819,6 +838,7 @@ class Component(
     CPEMixin,
     ParentChildModelMixin,
     BaseComponentMixin,
+    VulnerabilityMixin,
     DataspacedModel,
 ):
     configuration_status = models.ForeignKey(
@@ -1565,7 +1585,7 @@ class ComponentKeyword(DataspacedModel):
 PACKAGE_URL_FIELDS = ["type", "namespace", "name", "version", "qualifiers", "subpath"]
 
 
-class PackageQuerySet(PackageURLQuerySetMixin, DataspacedQuerySet):
+class PackageQuerySet(PackageURLQuerySetMixin, VulnerabilityQuerySetMixin, DataspacedQuerySet):
     def annotate_sortable_identifier(self):
         """
         Annotate the QuerySet with a `sortable_identifier` value that combines
@@ -1591,6 +1611,7 @@ class Package(
     URLFieldsMixin,
     HashFieldsMixin,
     PackageURLMixin,
+    VulnerabilityMixin,
     DataspacedModel,
 ):
     filename = models.CharField(
