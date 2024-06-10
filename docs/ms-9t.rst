@@ -1,7 +1,7 @@
-.. _user_tutorial_1:
+.. _user_ms-9t_1:
 
 ===============================
-Tutorial 1 - Your first Product
+ms-9t 1 - Your first Product
 ===============================
 
 Sign into DejaCode.
